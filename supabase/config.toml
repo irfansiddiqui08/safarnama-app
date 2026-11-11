@@ -1,0 +1,13 @@
+# Supabase project settings used by `supabase functions deploy`
+[functions.video-url]
+verify_jwt = true
+
+[functions.bunny-upload]
+verify_jwt = true
+
+# Razorpay calls this one directly, so it checks Razorpay's own signature instead of a login.
+[functions.razorpay-webhook]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = true
