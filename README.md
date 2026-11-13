@@ -9,6 +9,9 @@ Students log in with their email, join live Zoom classes, and watch each class r
 | Database, logins, access rules | `supabase/` | Supabase (Postgres) |
 | Admin panel for Humaira | lives in the website repo at `safarnama.club/admin/` | HTML + Supabase |
 | Class recordings | — | Bunny Stream |
+| Push notifications | — | Expo push service + Firebase (free) |
+| Instant bug-fix updates | — | EAS Update (free up to 1,000 students/month) |
+| Crash reports (optional) | — | Sentry (free plan) |
 
 ## How access works
 - **Students only see what they paid for.** The database itself enforces this, not just the app.
@@ -26,8 +29,9 @@ Students log in with their email, join live Zoom classes, and watch each class r
 ### 1. Supabase (database + logins), free plan
 1. Create a project at **supabase.com**. Name it `safarnama` and choose region **Mumbai (ap-south-1)**.
 2. **SQL Editor** → New query → paste all of `supabase/migrations/20261111000000_init.sql` → **Run**.
-3. New query → paste `supabase/seed.sql` → **Run**. This adds the 12 programmes and the December batch.
-4. **Project Settings → API**: copy the **Project URL** and the **anon public** key. You'll need them in steps 6 and 7.
+3. New query → paste `supabase/migrations/20261113000000_push_and_settings.sql` → **Run**.
+4. New query → paste `supabase/seed.sql` → **Run**. This adds the 12 programmes and the December batch.
+5. **Project Settings → API**: copy the **Project URL** and the **anon public** key. You'll need them in steps 6 and 7.
 
 ### 2. Email sender (required: Supabase's built-in sender only emails your own team)
 1. Create a free account at **resend.com** (3,000 emails/month free) or **brevo.com**.
@@ -59,7 +63,7 @@ cd safarnama-app
 npx supabase login
 npx supabase link --project-ref YOUR_PROJECT_REF      # the part before .supabase.co
 npx supabase secrets set BUNNY_LIBRARY_ID=xxxx BUNNY_API_KEY=xxxx BUNNY_TOKEN_KEY=xxxx RAZORPAY_WEBHOOK_SECRET=choose-a-long-random-text
-npx supabase functions deploy video-url bunny-upload razorpay-webhook delete-account
+npx supabase functions deploy video-url bunny-upload razorpay-webhook delete-account send-push
 ```
 `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are provided to functions automatically.
 
@@ -75,16 +79,40 @@ In the **website repo**, edit `admin/config.js` and paste in the Project URL and
    - The ₹11,000, ₹2,100 and ₹3,500 pages are matched by price automatically. The ₹999 pages need this step because several programmes cost ₹999.
    - Anything that can't be matched appears under **Payments** for one-click enrolment.
 
-### 8. Run the app on your phone
+### 8. Link the app to Expo (once)
+```bash
+cd app
+npx eas-cli@latest login
+npx eas-cli@latest init                 # creates the Expo project and writes its ID into app.json
+npx eas-cli@latest update:configure     # turns on instant updates (adds the updates URL to app.json)
+```
+Commit the changed `app.json`.
+
+### 9. Push notifications: Android (Firebase, free)
+1. **console.firebase.google.com** → Add project `safarnama` (Analytics off).
+2. Add an **Android app**. Package name: `club.safarnama.app`.
+3. Download **google-services.json** and put it in the `app/` folder. It is picked up automatically.
+4. Firebase → Project settings → **Service accounts** → **Generate new private key**. This downloads a JSON key; keep it private and don't commit it.
+5. Upload that key to Expo: `npx eas-cli@latest credentials` → Android → production → **Google Service Account** → **Manage your Google Service Account Key for Push Notifications (FCM V1)** → choose the file.
+
+iPhone needs no extra step: EAS sets up Apple's push key during the first iOS build.
+
+### 10. Crash reports (optional, recommended)
+1. **sentry.io** → free account → new **React Native** project → copy the **DSN**.
+2. Add it to EAS so builds include it: `npx eas-cli@latest env:create --name EXPO_PUBLIC_SENTRY_DSN --value "https://...ingest.sentry.io/..." --environment production --environment preview --visibility plaintext`
+3. Crashes then arrive by email with the screen and phone model. Student names and emails are never sent.
+
+### 11. Run the app on your phone
 ```bash
 cd app
 cp .env.example .env           # paste the Supabase URL + anon key
 npm install
 npx expo start                 # scan the QR code with the Expo Go app
 ```
-To preview with sample data and no Supabase: `npm run demo`.
+- To preview with sample data and no Supabase: `npm run demo`.
+- **Expo Go can't receive push notifications.** To test them, install a preview build (next step) instead.
 
-### 9. Build for the stores (no Mac needed)
+### 12. Build for the stores (no Mac needed)
 ```bash
 npx eas-cli@latest login                                   # free expo.dev account
 npx eas-cli@latest build -p android --profile preview      # APK to share with test students
@@ -100,12 +128,23 @@ For App Review, give both stores a **demo login**: a test email enrolled in one 
 
 ---
 
+## Sending fixes and updates later
+| What changed | How it reaches students | Command |
+|---|---|---|
+| Database, access rules, backend functions, admin panel, website | Instantly. These run on servers. | `npx supabase functions deploy …` or push to GitHub |
+| App screens, text, logic (JavaScript) | **Over-the-air**: downloads quietly and applies on the next app open. No store review. | `cd app && npx eas-cli@latest update --channel production --message "Fix login text"` |
+| New native features, Expo SDK upgrade, app version change | New store build (Google review, usually under a day) | `eas build -p all --profile production` then `eas submit` |
+
+To make everyone install a new store version, raise **More → Force app update** in the admin panel *after* the new version is live in the store.
+
 ## Everyday use (Humaira, admin panel)
 - **Schedule classes:** Classes → choose the programme, title, date/time and Zoom link. Tick "repeat daily" for multi-day programmes.
 - **After each class:** Recordings → choose the class → upload the Zoom recording. Students can watch it for 24 hours.
 - **Cash / UPI students:** Students → Add a student.
 - **Student changed phone:** More → Reset devices.
 - **Notice for everyone:** More → Announcement. It shows at the top of the app home screen.
+- **Push notification:** Notify → write a title and message → choose all students, one programme or one email → Send.
+- **Automatic notifications:** a reminder 10 minutes before every class (scheduled on the phone), and "🎬 New recording" when a recording is uploaded.
 
 ## Development
 - `app/` → `npm run typecheck`, `npm run demo`, `npm run export:web`

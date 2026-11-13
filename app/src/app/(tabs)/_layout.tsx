@@ -2,8 +2,6 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, fonts } from "../../lib/theme";
 
-type Icon = React.ComponentProps<typeof Ionicons>["name"];
-const icon = (name: Icon) => ({ color, size }: { color: unknown; size: number }) => <Ionicons name={name} color={color as string} size={size} />;
 
 export default function TabsLayout() {
   return (
@@ -15,10 +13,10 @@ export default function TabsLayout() {
       tabBarLabelStyle: { fontFamily: fonts.bodyBold, fontSize: 11.5 },
       sceneStyle: { backgroundColor: colors.ivory },
     }}>
-      <Tabs.Screen name="index" options={{ title: "Home", tabBarIcon: icon("home") }} />
-      <Tabs.Screen name="classes" options={{ title: "Live Classes", tabBarIcon: icon("videocam") }} />
-      <Tabs.Screen name="programmes" options={{ title: "Programmes", tabBarIcon: icon("book") }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: icon("person-circle") }} />
+      <Tabs.Screen name="index" options={{ title: "Home", tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color as string} size={size} /> }} />
+      <Tabs.Screen name="classes" options={{ title: "Live Classes", tabBarIcon: ({ color, size }) => <Ionicons name="videocam" color={color as string} size={size} /> }} />
+      <Tabs.Screen name="programmes" options={{ title: "Programmes", tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color as string} size={size} /> }} />
+      <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: ({ color, size }) => <Ionicons name="person-circle" color={color as string} size={size} /> }} />
     </Tabs>
   );
 }

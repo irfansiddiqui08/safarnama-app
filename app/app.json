@@ -41,11 +41,27 @@
           "imageWidth": 220,
           "backgroundColor": "#FBF7EF"
         }
+      ],
+      "@sentry/react-native",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#D99A0B",
+          "defaultChannel": "default"
+        }
       ]
     ],
     "scheme": "safarnama",
     "experiments": {
       "typedRoutes": false
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     }
   }
 }

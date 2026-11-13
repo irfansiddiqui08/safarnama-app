@@ -35,3 +35,15 @@ Deno.test("ambiguous 999 without mapping is unmatched", () => {
 Deno.test("match by programme name in description", () => {
   assert(findProgramme("{}", { amount: 99900, description: "Chakra Healing & Balancing" }, progs, []) === "chakra-healing", "desc");
 });
+
+import { chunk, safeUrl } from "./send-push/index.ts";
+Deno.test("push batches of 100", () => {
+  const b = chunk(Array.from({ length: 250 }, (_, i) => i), 100);
+  assert(b.length === 3 && b[2].length === 50, "chunks");
+});
+Deno.test("notification can only open in-app screens", () => {
+  assert(safeUrl("/player/abc-123") === "/player/abc-123", "player");
+  assert(safeUrl("/(tabs)/classes") === "/(tabs)/classes", "tab");
+  assert(safeUrl("https://evil.com") === undefined, "external blocked");
+  assert(safeUrl("javascript:alert(1)") === undefined, "js blocked");
+});

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Animated, Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,12 +10,12 @@ import { remaining } from "../../lib/format";
 import { colors, fonts } from "../../lib/theme";
 import { Button } from "../../components/ui";
 
-const WebView = Platform.OS === "web" ? null : require("react-native-webview").WebView;
+import { WebView } from "react-native-webview";
 
 /** Moves the student's email around the video every few seconds — discourages screen recording. */
 function Watermark({ text }: { text: string }) {
   const { width, height } = useWindowDimensions();
-  const pos = useRef(new Animated.ValueXY({ x: 20, y: 80 })).current;
+  const [pos] = useState(() => new Animated.ValueXY({ x: 20, y: 80 }));
   useEffect(() => {
     const move = () => Animated.timing(pos, { toValue: { x: Math.random() * Math.max(width - 240, 10), y: 60 + Math.random() * Math.max(height - 220, 10) }, duration: 1600, useNativeDriver: Platform.OS !== "web" }).start();
     move(); const t = setInterval(move, 7000); return () => clearInterval(t);
@@ -39,13 +39,12 @@ export default function Player() {
     return () => { ScreenCapture.allowScreenCaptureAsync("player").catch(() => {}); };
   }, []);
 
-  const load = async () => {
-    setLoading(true); setErr(null);
-    try { const v = await api.getVideoUrl(String(id)); setUrl(v.url); setWm(v.watermark); }
-    catch (e) { setErr((e as Error).message); }
-    finally { setLoading(false); }
-  };
-  useEffect(() => { load(); }, [id]);
+  const fetchUrl = useCallback(() => api.getVideoUrl(String(id)).then(
+    (v) => { setUrl(v.url); setWm(v.watermark); setErr(null); },
+    (e: Error) => setErr(e.message),
+  ).finally(() => setLoading(false)), [id]);
+  useEffect(() => { fetchUrl(); }, [fetchUrl]);
+  const retry = () => { setLoading(true); setErr(null); fetchUrl(); };
 
   // count as watched after 2 minutes on the player
   useEffect(() => { const t = setTimeout(() => { api.markWatched(String(id)).then(reload); }, 120000); return () => clearTimeout(t); }, [id, reload]);
@@ -64,7 +63,7 @@ export default function Player() {
         {loading ? <ActivityIndicator color={colors.gold} size="large" /> : err ? (
           <View style={{ padding: 24, gap: 14, alignItems: "center" }}>
             <Text style={[st.title, { textAlign: "center" }]}>{err}</Text>
-            <Button title="फिर try करें" variant="gold" onPress={load} />
+            <Button title="फिर try करें" variant="gold" onPress={retry} />
           </View>
         ) : url ? (
           Platform.OS === "web"
