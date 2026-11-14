@@ -26,12 +26,13 @@ Students log in with their email, join live Zoom classes, and watch each class r
 
 ## One-time setup (≈ 1 hour)
 
-### 1. Supabase (database + logins), free plan
+### 1. Supabase (database + logins), free plan ✅ done 14 Nov 2026
+Project `safarnama` (Mumbai): `https://mtcvkfyxxkurinfloazu.supabase.co` · all SQL below has been run.
 1. Create a project at **supabase.com**. Name it `safarnama` and choose region **Mumbai (ap-south-1)**.
 2. **SQL Editor** → New query → paste all of `supabase/migrations/20261111000000_init.sql` → **Run**.
 3. New query → paste `supabase/migrations/20261113000000_push_and_settings.sql` → **Run**.
 4. New query → paste `supabase/seed.sql` → **Run**. This adds the 12 programmes and the December batch.
-5. **Project Settings → API**: copy the **Project URL** and the **anon public** key. You'll need them in steps 6 and 7.
+5. **Project Settings → API Keys**: the **publishable key** (`sb_publishable_…`) replaces the old "anon public" key. It's already in `app/src/lib/config.ts` and the website's `admin/config.js`.
 
 ### 2. Email sender (required: Supabase's built-in sender only emails your own team)
 1. Create a free account at **resend.com** (3,000 emails/month free) or **brevo.com**.
@@ -67,8 +68,8 @@ npx supabase functions deploy video-url bunny-upload razorpay-webhook delete-acc
 ```
 `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are provided to functions automatically.
 
-### 6. Admin panel
-In the **website repo**, edit `admin/config.js` and paste in the Project URL and anon key. Then open **https://safarnama.club/admin/** and log in with Humaira's email.
+### 6. Admin panel ✅ connected
+Open **https://safarnama.club/admin/** and log in with Humaira's email. This needs steps 2 and 3 first.
 
 ### 7. Razorpay → automatic enrolment
 1. Razorpay Dashboard → **Accounts & Settings → Webhooks → Add new webhook**:
@@ -105,7 +106,6 @@ iPhone needs no extra step: EAS sets up Apple's push key during the first iOS bu
 ### 11. Run the app on your phone
 ```bash
 cd app
-cp .env.example .env           # paste the Supabase URL + anon key
 npm install
 npx expo start                 # scan the QR code with the Expo Go app
 ```
