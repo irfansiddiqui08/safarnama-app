@@ -34,7 +34,12 @@ Project `safarnama` (Mumbai): `https://mtcvkfyxxkurinfloazu.supabase.co` · all 
 4. New query → paste `supabase/seed.sql` → **Run**. This adds the 12 programmes and the December batch.
 5. **Project Settings → API Keys**: the **publishable key** (`sb_publishable_…`) replaces the old "anon public" key. It's already in `app/src/lib/config.ts` and the website's `admin/config.js`.
 
-### 2. Email sender (required: Supabase's built-in sender only emails your own team)
+### 2. Email sender ✅ done 15 Nov 2026
+Resend domain `safarnama.club` (Tokyo) is verified, and its DNS records are in Namecheap. Supabase sends through `smtp.resend.com:465` as **login@safarnama.club**. Both code templates are set; codes are 6 digits and expire after 15 minutes; the limit is 100 emails/hour. The Resend API key is stored only in Supabase.
+
+<details><summary>How it was set up (for reference)</summary>
+
+(Required because Supabase's built-in sender only emails your own team.)
 1. Create a free account at **resend.com** (3,000 emails/month free) or **brevo.com**.
 2. Add the domain `safarnama.club`. Put the DNS records it shows into **Namecheap → Advanced DNS**, then wait for "Verified".
 3. In Supabase → **Authentication → Emails → SMTP Settings**, turn on custom SMTP:
@@ -45,6 +50,8 @@ Project `safarnama` (Mumbai): `https://mtcvkfyxxkurinfloazu.supabase.co` · all 
    - Body: paste `supabase/email-template.html`. It shows the code (`{{ .Token }}`) instead of a link.
 5. **Authentication → Sign In / Providers → Email**: keep Email on. If the **Email OTP length** setting is shown, set it to **6**. The app accepts 6–8 digits either way.
 6. **Authentication → Rate Limits**: raise "emails per hour" to around 100.
+7. Also apply the same template to **Confirm sign up** (a new student's first code uses it), and set the **Email OTP expiration** to 900 seconds.
+</details>
 
 ### 3. Make Humaira the admin
 1. **Authentication → Users → Add user**: enter Humaira's email and turn on "Auto confirm".
