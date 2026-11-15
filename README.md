@@ -30,7 +30,7 @@ Students log in with their email, join live Zoom classes, and watch each class r
 Project `safarnama` (Mumbai): `https://mtcvkfyxxkurinfloazu.supabase.co` · all SQL below has been run.
 1. Create a project at **supabase.com**. Name it `safarnama` and choose region **Mumbai (ap-south-1)**.
 2. **SQL Editor** → New query → paste all of `supabase/migrations/20261111000000_init.sql` → **Run**.
-3. New query → paste `supabase/migrations/20261113000000_push_and_settings.sql` → **Run**.
+3. New query → paste `supabase/migrations/20261113000000_push_and_settings.sql` → **Run**, then the same for `20261115000000_admin_emails.sql`.
 4. New query → paste `supabase/seed.sql` → **Run**. This adds the 12 programmes and the December batch.
 5. **Project Settings → API Keys**: the **publishable key** (`sb_publishable_…`) replaces the old "anon public" key. It's already in `app/src/lib/config.ts` and the website's `admin/config.js`.
 
@@ -53,12 +53,13 @@ Resend domain `safarnama.club` (Tokyo) is verified, and its DNS records are in N
 7. Also apply the same template to **Confirm sign up** (a new student's first code uses it), and set the **Email OTP expiration** to 900 seconds.
 </details>
 
-### 3. Make Humaira the admin
-1. **Authentication → Users → Add user**: enter Humaira's email and turn on "Auto confirm".
-2. SQL Editor:
-   ```sql
-   update public.profiles set is_admin = true where email = 'humayrasheikh03@gmail.com';
-   ```
+### 3. Make Humaira the admin ✅ done 15 Nov 2026
+Admins are listed in the `admin_emails` table (migration `20261115000000_admin_emails.sql`). `humayrasheikh03@gmail.com` is on it, and her first code login at safarnama.club/admin creates her account as an admin. No passwords are involved.
+To add another admin (SQL Editor):
+```sql
+insert into public.admin_emails values ('someone@example.com');
+update public.profiles set is_admin = true where email = 'someone@example.com';
+```
 
 ### 4. Bunny Stream (recordings)
 1. At **bunny.net** → Stream → **Add Video Library**. Name it `safarnama` and pick the Asia region.
