@@ -26,8 +26,12 @@ Deno.test("match by payment page id mapping", () => {
   const raw = JSON.stringify({ payload: { payment: { entity: { notes: { payment_page_id: "pl_ABC123" } } } } });
   assert(findProgramme(raw, { amount: 99900 }, progs, [{ match_key: "pl_ABC123", programme_id: "inner-child" }]) === "inner-child", "map");
 });
-Deno.test("match unique amount (bundle 11000)", () => {
-  assert(findProgramme("{}", { amount: 1100000 }, progs, []) === "complete", "bundle");
+Deno.test("no guessing by amount (one-to-one sessions share prices)", () => {
+  assert(findProgramme("{}", { amount: 1100000 }, progs, []) === null, "no amount match");
+});
+Deno.test("website checkout notes win", () => {
+  assert(findProgramme("{}", { amount: 99900, notes: { programme_id: "inner-child" } }, progs, []) === "inner-child", "notes id");
+  assert(findProgramme("{}", { amount: 99900, notes: { programme_id: "not-real" } }, progs, []) === null, "unknown id");
 });
 Deno.test("ambiguous 999 without mapping is unmatched", () => {
   assert(findProgramme("{}", { amount: 99900 }, progs, []) === null, "ambiguous");
@@ -46,4 +50,18 @@ Deno.test("notification can only open in-app screens", () => {
   assert(safeUrl("/(tabs)/classes") === "/(tabs)/classes", "tab");
   assert(safeUrl("https://evil.com") === undefined, "external blocked");
   assert(safeUrl("javascript:alert(1)") === undefined, "js blocked");
+});
+
+import { cleanPhone, validate } from "./create-order/index.ts";
+Deno.test("checkout phone cleaning", () => {
+  assert(cleanPhone("+91 73548 54003") === "7354854003", "+91");
+  assert(cleanPhone("07354854003") === "7354854003", "0 prefix");
+  assert(cleanPhone("12345") === null, "short");
+  assert(cleanPhone("5354854003") === null, "bad start");
+});
+Deno.test("checkout validation", () => {
+  const good = validate({ programme_id: "inner-child", name: "Asha  Verma", email: " Asha@Mail.com ", phone: "9876543210" });
+  assert(good.ok && good.v.email === "asha@mail.com" && good.v.name === "Asha Verma", "good");
+  assert(!validate({ programme_id: "x'; drop", name: "A B", email: "a@b.co", phone: "9876543210" }).ok, "bad id");
+  assert(!validate({ programme_id: "inner-child", name: "A B", email: "not-an-email", phone: "9876543210" }).ok, "bad email");
 });

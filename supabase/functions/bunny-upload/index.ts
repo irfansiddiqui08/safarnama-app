@@ -19,7 +19,11 @@ Deno.serve(async (req) => {
       headers: { AccessKey: apiKey, Accept: "application/json", "Content-Type": "application/json" },
       body: JSON.stringify({ title: title || "Safarnama class recording" }),
     });
-    if (!r.ok) return json({ error: "Bunny create failed: " + (await r.text()) }, 502);
+    if (!r.ok) {
+      const msg = await r.text();
+      console.error("Bunny create failed", r.status, msg, "libraryId=", libraryId, "keyLength=", apiKey.length, "keyHasSpaces=", /\s/.test(apiKey));
+      return json({ error: `Bunny create failed (${r.status}): ${msg}` }, 502);
+    }
     const video = await r.json();
     const expire = Math.floor(Date.now() / 1000) + 6 * 3600;
     const signature = await sha256Hex(`${libraryId}${apiKey}${expire}${video.guid}`);

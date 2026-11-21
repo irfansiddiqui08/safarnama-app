@@ -14,3 +14,7 @@ verify_jwt = true
 
 [functions.send-push]
 verify_jwt = true
+
+[functions.create-order]
+# Public: anyone on the website can start a checkout. Price comes from the database.
+verify_jwt = false

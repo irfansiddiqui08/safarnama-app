@@ -9,16 +9,19 @@ import { env, hmacSha256Hex, json, safeEqual } from "../_shared/util.ts";
 type Programme = { id: string; name: string; amount: number; access_days: number | null; is_bundle: boolean };
 
 export function findProgramme(raw: string, payment: Record<string, unknown>, programmes: Programme[], map: { match_key: string; programme_id: string }[]): string | null {
+  const notes = (payment.notes ?? {}) as Record<string, unknown>;
+  // 1) website checkout: create-order writes the exact programme id into the order notes
+  const pid = typeof notes.programme_id === "string" ? notes.programme_id : "";
+  if (pid && programmes.some((p) => p.id === pid)) return pid;
   const hay = raw.toLowerCase();
-  // 1) explicit mapping: Razorpay payment page id (pl_...) or a word from the page title
+  // 2) explicit mapping: Razorpay payment page id (pl_...) or a word from the page title
   for (const m of map) if (m.match_key && hay.includes(m.match_key.toLowerCase())) return m.programme_id;
-  // 2) the programme id/slug written anywhere in notes or description
-  const text = JSON.stringify([payment.notes ?? {}, payment.description ?? ""]).toLowerCase();
+  // 3) the programme id/slug written anywhere in notes or description
+  const text = JSON.stringify([notes, payment.description ?? ""]).toLowerCase();
   for (const p of programmes) if (text.includes(p.id) || text.includes(p.name.toLowerCase())) return p.id;
-  // 3) amount, only when exactly one programme has that price
-  const rupees = Math.round(Number(payment.amount ?? 0) / 100);
-  const byAmount = programmes.filter((p) => p.amount === rupees);
-  return byAmount.length === 1 ? byAmount[0].id : null;
+  // No guessing by amount: other payments on this Razorpay account (e.g. one-to-one sessions)
+  // can share a price with a programme. Anything else goes to the admin's Payments tab.
+  return null;
 }
 
 if (import.meta.main) Deno.serve(async (req) => {
@@ -32,7 +35,7 @@ if (import.meta.main) Deno.serve(async (req) => {
 
   const payment = body.payload?.payment?.entity ?? {};
   const admin = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
-  const email = String(payment.email ?? "").trim().toLowerCase();
+  const email = String(payment.email || (payment.notes as Record<string, string> | undefined)?.email || "").trim().toLowerCase();
   const phone = String(payment.contact ?? "");
   const amount = Math.round(Number(payment.amount ?? 0) / 100);
 
