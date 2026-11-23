@@ -61,7 +61,14 @@
     },
     "updates": {
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/8b59ad81-2a99-466e-abcb-6de7c00163f5"
+    },
+    "owner": "safarnamaclubs-team",
+    "extra": {
+      "eas": {
+        "projectId": "8b59ad81-2a99-466e-abcb-6de7c00163f5"
+      }
     }
   }
 }
