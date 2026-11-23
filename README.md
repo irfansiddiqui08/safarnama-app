@@ -61,12 +61,12 @@ insert into public.admin_emails values ('someone@example.com');
 update public.profiles set is_admin = true where email = 'someone@example.com';
 ```
 
-### 4. Bunny Stream (recordings)
+### 4. Bunny Stream (recordings) ✅ done 18 Nov 2026 (library 809902)
 1. At **bunny.net** → Stream → **Add Video Library**. Name it `safarnama` and pick the Asia region.
 2. Library → **API**: copy the **Library ID** and **API Key**.
 3. Library → **Security**: turn on **Embed view token authentication**, then copy the **Token authentication key**. It is a different key from the API Key.
 
-### 5. Deploy the backend functions (from your computer)
+### 5. Deploy the backend functions ✅ done 18–22 Nov 2026 (deployed from the Supabase dashboard; includes `create-order`)
 ```bash
 cd safarnama-app
 npx supabase login
@@ -79,7 +79,10 @@ npx supabase functions deploy video-url bunny-upload razorpay-webhook delete-acc
 ### 6. Admin panel ✅ connected
 Open **https://safarnama.club/admin/** and log in with Humaira's email. This needs steps 2 and 3 first.
 
-### 7. Razorpay → automatic enrolment
+### 7. Razorpay → automatic enrolment ✅ done 23 Nov 2026
+The website now takes payments itself: **Join** on safarnama.club calls the `create-order` function, which charges the price stored in the database and writes the programme into the order. The webhook enrols the buyer's email automatically. Secrets: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`. One-to-one sessions are still booked on WhatsApp.
+
+Older notes (Payment Pages, only needed if you ever add one):
 1. Razorpay Dashboard → **Accounts & Settings → Webhooks → Add new webhook**:
    - URL: `https://YOUR_PROJECT_REF.supabase.co/functions/v1/razorpay-webhook`
    - Secret: the same text you used for `RAZORPAY_WEBHOOK_SECRET`
@@ -88,7 +91,7 @@ Open **https://safarnama.club/admin/** and log in with Humaira's email. This nee
    - The ₹11,000, ₹2,100 and ₹3,500 pages are matched by price automatically. The ₹999 pages need this step because several programmes cost ₹999.
    - Anything that can't be matched appears under **Payments** for one-click enrolment.
 
-### 8. Link the app to Expo (once)
+### 8. Link the app to Expo ✅ done 23 Nov 2026 (project `@safarnamaclubs-team/safarnama`, builds run from GitHub, base directory `/app`)
 ```bash
 cd app
 npx eas-cli@latest login
@@ -97,7 +100,7 @@ npx eas-cli@latest update:configure     # turns on instant updates (adds the upd
 ```
 Commit the changed `app.json`.
 
-### 9. Push notifications: Android (Firebase, free)
+### 9. Push notifications: Android (Firebase, free) ✅ done 23 Nov 2026 (Firebase project `safarnamaclub-19edf`, FCM V1 key uploaded to Expo)
 1. **console.firebase.google.com** → Add project `safarnama` (Analytics off).
 2. Add an **Android app**. Package name: `club.safarnama.app`.
 3. Download **google-services.json** and put it in the `app/` folder. It is picked up automatically.
@@ -106,7 +109,7 @@ Commit the changed `app.json`.
 
 iPhone needs no extra step: EAS sets up Apple's push key during the first iOS build.
 
-### 10. Crash reports (optional, recommended)
+### 10. Crash reports (optional, recommended) — not set up yet
 1. **sentry.io** → free account → new **React Native** project → copy the **DSN**.
 2. Add it to EAS so builds include it: `npx eas-cli@latest env:create --name EXPO_PUBLIC_SENTRY_DSN --value "https://...ingest.sentry.io/..." --environment production --environment preview --visibility plaintext`
 3. Crashes then arrive by email with the screen and phone model. Student names and emails are never sent.
@@ -120,7 +123,7 @@ npx expo start                 # scan the QR code with the Expo Go app
 - To preview with sample data and no Supabase: `npm run demo`.
 - **Expo Go can't receive push notifications.** To test them, install a preview build (next step) instead.
 
-### 12. Build for the stores (no Mac needed)
+### 12. Build for the stores (no Mac needed) — first Android test APK built 23 Nov 2026; store builds pending
 ```bash
 npx eas-cli@latest login                                   # free expo.dev account
 npx eas-cli@latest build -p android --profile preview      # APK to share with test students
