@@ -16,7 +16,7 @@
     "android": {
       "package": "club.safarnama.app",
       "adaptiveIcon": {
-        "backgroundColor": "#FBF7EF",
+        "backgroundColor": "#38311E",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
