@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5371189698",
+    "project_id": "safarnamaclub-19edf",
+    "storage_bucket": "safarnamaclub-19edf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5371189698:android:22e124ecb64461b866de5b",
+        "android_client_info": {
+          "package_name": "club.safarnama.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCx8ni5fhxnJztaqxNyRYWOg92XOvsKZA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
