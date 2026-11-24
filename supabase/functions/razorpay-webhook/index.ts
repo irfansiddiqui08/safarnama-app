@@ -24,6 +24,11 @@ export function findProgramme(raw: string, payment: Record<string, unknown>, pro
   return null;
 }
 
+export function isShopPayment(payment: Record<string, unknown>): boolean {
+  const notes = (payment.notes ?? {}) as Record<string, unknown>;
+  return notes.type === "shop";
+}
+
 if (import.meta.main) Deno.serve(async (req) => {
   const raw = await req.text();
   const sig = req.headers.get("x-razorpay-signature") ?? "";
@@ -34,6 +39,9 @@ if (import.meta.main) Deno.serve(async (req) => {
   if (body.event !== "payment.captured") return json({ ok: true, ignored: body.event });
 
   const payment = body.payload?.payment?.entity ?? {};
+  // Sarava Parihaara shop orders (saravaparihaaraglobal.com) share this Razorpay account.
+  // They are product sales, not course purchases: never enrol them or list them as unmatched.
+  if (isShopPayment(payment)) return json({ ok: true, ignored: "shop order" });
   const admin = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
   const email = String(payment.email || (payment.notes as Record<string, string> | undefined)?.email || "").trim().toLowerCase();
   const phone = String(payment.contact ?? "");

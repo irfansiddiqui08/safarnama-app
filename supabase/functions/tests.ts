@@ -1,5 +1,6 @@
 // deno test -A functions/tests.ts
-import { findProgramme } from "./razorpay-webhook/index.ts";
+import { findProgramme, isShopPayment } from "./razorpay-webhook/index.ts";
+import { quote } from "./shop-order/index.ts";
 import { signEmbedUrl } from "./video-url/index.ts";
 import { hmacSha256Hex, safeEqual, sha256Hex } from "./_shared/util.ts";
 
@@ -64,4 +65,16 @@ Deno.test("checkout validation", () => {
   assert(good.ok && good.v.email === "asha@mail.com" && good.v.name === "Asha Verma", "good");
   assert(!validate({ programme_id: "x'; drop", name: "A B", email: "a@b.co", phone: "9876543210" }).ok, "bad id");
   assert(!validate({ programme_id: "inner-child", name: "A B", email: "not-an-email", phone: "9876543210" }).ok, "bad email");
+});
+
+Deno.test("shop: server prices, merged lines, validation", () => {
+  const c = { name: "Test User", phone: "+91 98765 43210", address: "12 Station Road, Ward 5", city: "Rajnandgaon", pincode: "491441" };
+  const q = quote({ items: [{ id: "oil-200", qty: 1 }, { id: "comb", qty: 2 }, { id: "oil-200", qty: 1 }], customer: c });
+  assert(q.ok && q.total === 999 * 2 + 399 * 2 && q.lines.length === 2, "total");
+  assert(!quote({ items: [{ id: "oil-200", qty: 1, price: 1 }], customer: { ...c, pincode: "12" } }).ok, "bad pin");
+  assert(!quote({ items: [{ id: "fake", qty: 1 }], customer: c }).ok, "unknown id");
+  assert(!quote({ items: [], customer: c }).ok, "empty");
+});
+Deno.test("shop payments are skipped by the enrolment webhook", () => {
+  assert(isShopPayment({ notes: { type: "shop" } }) && !isShopPayment({ notes: { programme_id: "complete" } }), "shop flag");
 });

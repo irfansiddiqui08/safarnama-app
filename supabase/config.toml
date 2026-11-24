@@ -18,3 +18,7 @@ verify_jwt = true
 [functions.create-order]
 # Public: anyone on the website can start a checkout. Price comes from the database.
 verify_jwt = false
+
+[functions.shop-order]
+# Public: Sarava Parihaara website cart checkout. Prices are fixed inside the function.
+verify_jwt = false
