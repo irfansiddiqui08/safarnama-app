@@ -1,15 +1,18 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts } from "../../lib/theme";
 
 
 export default function TabsLayout() {
+  // Leave room for the phone's own navigation buttons / gesture bar (Android draws edge-to-edge).
+  const { bottom } = useSafeAreaInsets();
   return (
     <Tabs screenOptions={{
       headerShown: false,
       tabBarActiveTintColor: colors.brown,
       tabBarInactiveTintColor: "#a8988c",
-      tabBarStyle: { backgroundColor: colors.paper, borderTopColor: colors.line, height: 64, paddingTop: 6, paddingBottom: 8 },
+      tabBarStyle: { backgroundColor: colors.paper, borderTopColor: colors.line, height: 58 + Math.max(bottom, 8), paddingTop: 6, paddingBottom: Math.max(bottom, 8) },
       tabBarLabelStyle: { fontFamily: fonts.bodyBold, fontSize: 11.5 },
       sceneStyle: { backgroundColor: colors.ivory },
     }}>

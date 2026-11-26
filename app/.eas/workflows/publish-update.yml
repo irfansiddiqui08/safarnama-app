@@ -1,0 +1,20 @@
+# Sends an over-the-air update to installed apps whenever app code is pushed to main.
+# Only JavaScript/screen changes travel this way. Native changes (icon, permissions,
+# new native packages, version number) still need a new build.
+name: Publish update
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  update_preview:
+    name: Update test app (preview channel)
+    type: update
+    params:
+      channel: preview
+  update_production:
+    name: Update store app (production channel)
+    type: update
+    params:
+      channel: production

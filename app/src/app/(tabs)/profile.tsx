@@ -18,7 +18,15 @@ export default function Profile() {
   const wa = (text: string) => Linking.openURL(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`);
 
   return (
-    <Screen header={<H1>Profile</H1>}>
+    <Screen header={
+      <View style={st.head}>
+        <H1>Profile</H1>
+        <Pressable onPress={signOut} accessibilityRole="button" accessibilityLabel="Logout" style={({ pressed }) => [st.logoutTop, pressed && { opacity: 0.6 }]}>
+          <Ionicons name="log-out-outline" size={18} color={colors.brown} />
+          <Text style={st.logoutText}>Logout</Text>
+        </Pressable>
+      </View>
+    }>
       <Card style={{ gap: 10 }}>
         <Text style={st.label}>आपका नाम</Text>
         <TextInput value={name} onChangeText={(t) => { setName(t); setSaved(false); }} placeholder="पूरा नाम" placeholderTextColor="#a8988c" style={st.input} />
@@ -73,6 +81,9 @@ function Row({ icon, text, onPress, last }: { icon: React.ComponentProps<typeof 
 }
 
 const st = StyleSheet.create({
+  head: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  logoutTop: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.line },
+  logoutText: { fontFamily: fonts.bodyBold, fontSize: 14, color: colors.brown },
   label: { fontFamily: fonts.bodyHeavy, fontSize: 13, color: colors.brown },
   input: { borderWidth: 1.5, borderColor: colors.line, borderRadius: radius.sm, padding: 12, fontFamily: fonts.bodySemi, fontSize: 16, color: colors.text, backgroundColor: colors.ivory },
   enrol: { flexDirection: "row", gap: 8, alignItems: "center" },
