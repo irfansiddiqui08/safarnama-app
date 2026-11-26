@@ -168,12 +168,14 @@ Older notes (Payment Pages, only needed if you ever add one):
    - Anything that can't be matched appears under **Payments** for one-click enrolment.
 
 ### 7b. Sarava Parihaara shop checkout (saravaparihaaraglobal.com)
-The product website uses the same Razorpay account through a separate function, `shop-order`.
+Razorpay asked for the shop and the course to be on **separate Razorpay accounts** (26 Nov 2026). The shop uses its own account; the course setup is unchanged.
 - **Prices live inside `supabase/functions/shop-order/index.ts`** (the browser sends only product ids and quantities). Free shipping. When a price changes, update it there **and** in the website's `assets/js/products.js`.
-- Each Razorpay payment's **Notes** show the items, total, name, phone and delivery address. Fulfil orders from **Razorpay Dashboard → Transactions → Payments**.
-- Shop orders are marked `type: shop`, and `razorpay-webhook` skips them, so they never create enrolments or show up as unmatched payments.
-- **New-order email:** `razorpay-webhook` emails each paid shop order (items, address, phone, payment link) to Humaira through Resend. Secrets: `RESEND_API_KEY` (required), `ORDER_EMAIL_TO` (optional, default humayrasheikh03@gmail.com, comma-separate several). With Resend's free test sender the Resend account must be registered with the same email that receives the orders.
-- Deploy: Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor**, name `shop-order`, paste `shop-order/index.ts`, then turn **off** "Verify JWT" (Razorpay keys are already set as secrets). Redeploy `razorpay-webhook` after updating it: it is a single self-contained file, so open the function in the dashboard → Code → paste `razorpay-webhook/index.ts` → Deploy.
+- `shop-order` uses secrets `SHOP_RAZORPAY_KEY_ID` / `SHOP_RAZORPAY_KEY_SECRET` (the shop account's keys). The course keys (`RAZORPAY_*`) are never used for the shop.
+- `shop-webhook` receives `payment.captured` from the shop account (secret `SHOP_RAZORPAY_WEBHOOK_SECRET`) and emails each paid order (items, address, phone, payment link) through Resend. Secrets: `RESEND_API_KEY`, optional `ORDER_EMAIL_TO` (default humayrasheikh03@gmail.com, comma-separate several).
+- Each payment's **Notes** in the shop Razorpay account show items, total, name, phone and address.
+- Deploy both via Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor** (single self-contained files), with **Verify JWT off**.
+- Website switch: `checkoutUrl` in the site's `assets/js/config.js` (empty = WhatsApp ordering only). Paused until the shop account approves the domain.
+- `razorpay-webhook` still skips any `type: shop` payment (harmless safety net).
 
 ### 8. Link the app to Expo ✅ done 23 Nov 2026 (project `@safarnamaclubs-team/safarnama`, builds run from GitHub, base directory `/app`)
 ```bash
