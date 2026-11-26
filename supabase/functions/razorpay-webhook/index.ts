@@ -4,7 +4,25 @@
 // the buyer's email. Anything we can't match lands in payments_unmatched for
 // Humaira to assign from the admin panel.
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { env, hmacSha256Hex, json, safeEqual } from "../_shared/util.ts";
+// Helpers inlined (instead of importing ../_shared/util.ts) so this file can be
+// pasted into the Supabase dashboard editor on its own.
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+function env(name: string): string {
+  const v = Deno.env.get(name);
+  if (!v) throw new Error(`Missing secret ${name}`);
+  return v;
+}
+async function hmacSha256Hex(secret: string, message: string): Promise<string> {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
 
 type Programme = { id: string; name: string; amount: number; access_days: number | null; is_bundle: boolean };
 

@@ -87,7 +87,7 @@ The product website uses the same Razorpay account through a separate function, 
 - **Prices live inside `supabase/functions/shop-order/index.ts`** (the browser sends only product ids and quantities). Free shipping. When a price changes, update it there **and** in the website's `assets/js/products.js`.
 - Each Razorpay payment's **Notes** show the items, total, name, phone and delivery address. Fulfil orders from **Razorpay Dashboard → Transactions → Payments**.
 - Shop orders are marked `type: shop`, and `razorpay-webhook` skips them, so they never create enrolments or show up as unmatched payments.
-- Deploy: Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor**, name `shop-order`, paste `shop-order/index.ts`, then turn **off** "Verify JWT" (Razorpay keys are already set as secrets). Redeploy `razorpay-webhook` after updating it.
+- Deploy: Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor**, name `shop-order`, paste `shop-order/index.ts`, then turn **off** "Verify JWT" (Razorpay keys are already set as secrets). Redeploy `razorpay-webhook` after updating it: it is a single self-contained file, so open the function in the dashboard → Code → paste `razorpay-webhook/index.ts` → Deploy.
 
 Older notes (Payment Pages, only needed if you ever add one):
 1. Razorpay Dashboard → **Accounts & Settings → Webhooks → Add new webhook**:
