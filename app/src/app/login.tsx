@@ -43,14 +43,14 @@ export default function Login() {
           {step === "email" ? (
             <>
               <Text style={st.label}>Email</Text>
-              <TextInput value={email} onChangeText={setEmail} placeholder="aapka@email.com" placeholderTextColor="#a8988c" autoCapitalize="none" autoComplete="email"
+              <TextInput value={email} onChangeText={setEmail} placeholder="aapka@email.com" placeholderTextColor={colors.placeholder} autoCapitalize="none" autoComplete="email"
                 keyboardType="email-address" textContentType="emailAddress" returnKeyType="send" onSubmitEditing={() => emailOk && send()} style={st.input} accessibilityLabel="Email" />
               <Button title="Code भेजें" onPress={send} loading={busy} variant={emailOk ? "primary" : "disabled"} style={{ marginTop: 14 }} />
             </>
           ) : (
             <>
               <Text style={st.label}>Email में आया code</Text>
-              <TextInput ref={codeRef} value={code} onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 8))} placeholder="••••••" placeholderTextColor="#a8988c"
+              <TextInput ref={codeRef} value={code} onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 8))} placeholder="••••••" placeholderTextColor={colors.placeholder}
                 keyboardType="number-pad" textContentType="oneTimeCode" autoComplete="one-time-code" maxLength={8} style={[st.input, st.code]} accessibilityLabel="Login code"
                 onSubmitEditing={() => code.length >= 6 && verify()} />
               <Button title="Login करें" onPress={verify} loading={busy} variant={code.length >= 6 ? "primary" : "disabled"} style={{ marginTop: 14 }} />

@@ -39,7 +39,7 @@
         {
           "image": "./assets/splash-icon.png",
           "imageWidth": 220,
-          "backgroundColor": "#FBF7EF"
+          "backgroundColor": "#FFFDF6"
         }
       ],
       "@sentry/react-native",
@@ -47,7 +47,7 @@
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#D99A0B",
+          "color": "#D9A430",
           "defaultChannel": "default"
         }
       ]

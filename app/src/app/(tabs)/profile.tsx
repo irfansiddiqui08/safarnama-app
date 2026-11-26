@@ -29,7 +29,7 @@ export default function Profile() {
     }>
       <Card style={{ gap: 10 }}>
         <Text style={st.label}>आपका नाम</Text>
-        <TextInput value={name} onChangeText={(t) => { setName(t); setSaved(false); }} placeholder="पूरा नाम" placeholderTextColor="#a8988c" style={st.input} />
+        <TextInput value={name} onChangeText={(t) => { setName(t); setSaved(false); }} placeholder="पूरा नाम" placeholderTextColor={colors.placeholder} style={st.input} />
         <Button title={saved ? "✓ Save हो गया" : "नाम Save करें"} small variant={saved ? "ghost" : "primary"}
           onPress={async () => { await api.updateName(name.trim()); await refreshAccess(); setSaved(true); }} />
         <Text style={st.label}>Email</Text>

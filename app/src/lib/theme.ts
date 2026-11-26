@@ -1,17 +1,19 @@
-// Safarnama brand — same palette as safarnama.club
+// Safarnama brand — same navy & gold palette as safarnama.club (taken from the logo)
 export const colors = {
-  ink: "#24130b",
-  brown: "#3b2014",
-  brown2: "#5a3422",
-  gold: "#d99a0b",
-  goldSoft: "#f6e3b4",
-  green: "#2f5d27",
-  greenSoft: "#e6efdf",
-  ivory: "#fbf7ef",
+  ink: "#0b1a36",
+  brown: "#061d49", // main brand navy (name kept so screens don't change)
+  brown2: "#12306b",
+  gold: "#d9a430",
+  goldSoft: "#f6e7c1",
+  green: "#8a6410", // deep gold accent, as on the website
+  greenSoft: "#f6ecd2",
+  ivory: "#fffdf6",
   paper: "#ffffff",
-  text: "#2a1d16",
-  muted: "#6f6058",
-  line: "#e8dccb",
+  text: "#0b1a36",
+  muted: "#4f5b73",
+  line: "#e6e1d3",
+  placeholder: "#8a93a6",
+  onDarkSoft: "#c9d4ea", // secondary text on navy cards and the player
   danger: "#a3361b",
   dangerSoft: "#fff1ec",
   whatsapp: "#1f9d55",

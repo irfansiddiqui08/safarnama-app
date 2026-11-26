@@ -11,7 +11,7 @@ export default function TabsLayout() {
     <Tabs screenOptions={{
       headerShown: false,
       tabBarActiveTintColor: colors.brown,
-      tabBarInactiveTintColor: "#a8988c",
+      tabBarInactiveTintColor: colors.placeholder,
       tabBarStyle: { backgroundColor: colors.paper, borderTopColor: colors.line, height: 58 + Math.max(bottom, 8), paddingTop: 6, paddingBottom: Math.max(bottom, 8) },
       tabBarLabelStyle: { fontFamily: fonts.bodyBold, fontSize: 11.5 },
       sceneStyle: { backgroundColor: colors.ivory },

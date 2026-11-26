@@ -22,8 +22,8 @@ export function Card({ children, style, dark }: { children: React.ReactNode; sty
 type BtnProps = { title: string; onPress?: () => void; variant?: "primary" | "gold" | "ghost" | "whatsapp" | "disabled"; loading?: boolean; style?: ViewStyle; icon?: string; small?: boolean };
 export function Button({ title, onPress, variant = "primary", loading, style, icon, small }: BtnProps) {
   const disabled = variant === "disabled" || loading;
-  const bg = { primary: colors.brown, gold: colors.gold, ghost: "transparent", whatsapp: colors.whatsapp, disabled: "#e9e1d5" }[variant];
-  const fg = { primary: "#fff", gold: colors.brown, ghost: colors.brown, whatsapp: "#fff", disabled: "#9a8b80" }[variant];
+  const bg = { primary: colors.brown, gold: colors.gold, ghost: "transparent", whatsapp: colors.whatsapp, disabled: colors.line }[variant];
+  const fg = { primary: "#fff", gold: colors.brown, ghost: colors.brown, whatsapp: "#fff", disabled: colors.placeholder }[variant];
   return (
     <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}
       style={({ pressed }) => [s.btn, small && s.btnSmall, { backgroundColor: bg, borderColor: variant === "ghost" ? colors.brown : bg, opacity: pressed ? 0.85 : 1 }, style]}>

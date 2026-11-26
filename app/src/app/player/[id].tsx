@@ -87,7 +87,7 @@ const st = StyleSheet.create({
   bar: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 12, paddingVertical: 10 },
   close: { width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(255,255,255,.12)", alignItems: "center", justifyContent: "center" },
   title: { fontFamily: fonts.bodyHeavy, color: "#fff", fontSize: 16 },
-  left: { fontFamily: fonts.bodySemi, color: "#d8c9bc", fontSize: 13, marginTop: 2 },
+  left: { fontFamily: fonts.bodySemi, color: colors.onDarkSoft, fontSize: 13, marginTop: 2 },
   wm: { position: "absolute", top: 0, left: 0, color: "rgba(255,255,255,.28)", fontFamily: fonts.bodyBold, fontSize: 14 },
   demo: { alignItems: "center", gap: 8, padding: 24 },
 });

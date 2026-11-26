@@ -26,7 +26,7 @@ export async function registerForPush(userId: string): Promise<void> {
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
         // eslint-disable-next-line import/namespace -- AndroidImportance is a runtime enum re-exported by expo-notifications
-        name: "Safarnama updates", importance: Notifications.AndroidImportance.HIGH, sound: "default", lightColor: "#d99a0b",
+        name: "Safarnama updates", importance: Notifications.AndroidImportance.HIGH, sound: "default", lightColor: "#d9a430",
       });
     }
     let { status } = await Notifications.getPermissionsAsync();

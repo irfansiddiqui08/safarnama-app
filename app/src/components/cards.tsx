@@ -18,13 +18,13 @@ export function ClassCard({ c, programme, now, highlight }: { c: LiveClass; prog
         {st === "live" ? <Pill text="● LIVE" tone="red" /> : st === "joinable" ? <Pill text="शुरू होने वाली है" tone="green" /> : st === "ended" ? <Pill text="खत्म" tone="gold" /> : null}
       </View>
       <Text style={[st2.title, highlight && { color: "#fff" }]}>{c.title}</Text>
-      {programme ? <Body muted={!highlight} style={highlight ? { color: "#e0cfbd" } : { fontSize: 13.5 }}>{programme} · {c.duration_min} मिनट</Body> : null}
+      {programme ? <Body muted={!highlight} style={highlight ? { color: colors.onDarkSoft } : { fontSize: 13.5 }}>{programme} · {c.duration_min} मिनट</Body> : null}
       {st !== "ended" ? (
         <View style={{ marginTop: 14, gap: 8 }}>
           <Button title={canJoin ? "Zoom पर Join करें" : `Join ${JOIN_EARLY_MIN} मिनट पहले खुलेगा`} variant={canJoin ? "gold" : "disabled"} icon={canJoin ? "🎥" : "🔒"}
             onPress={() => c.zoom_url && Linking.openURL(c.zoom_url)} />
-          {st === "upcoming" ? <Text style={[st2.note, highlight && { color: "#e0cfbd" }]}>शुरू होने में {startsIn}</Text> : null}
-          {canJoin && c.zoom_passcode ? <Text style={[st2.note, highlight && { color: "#e0cfbd" }]}>Passcode: <Text style={{ fontFamily: fonts.bodyHeavy }}>{c.zoom_passcode}</Text></Text> : null}
+          {st === "upcoming" ? <Text style={[st2.note, highlight && { color: colors.onDarkSoft }]}>शुरू होने में {startsIn}</Text> : null}
+          {canJoin && c.zoom_passcode ? <Text style={[st2.note, highlight && { color: colors.onDarkSoft }]}>Passcode: <Text style={{ fontFamily: fonts.bodyHeavy }}>{c.zoom_passcode}</Text></Text> : null}
         </View>
       ) : null}
     </Card>
