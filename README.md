@@ -13,6 +13,82 @@ Students log in with their email, join live Zoom classes, and watch each class r
 | Instant bug-fix updates | — | EAS Update (free up to 1,000 students/month) |
 | Crash reports (optional) | — | Sentry (free plan) |
 
+## Quick reference — links, accounts, status (updated 26 Nov 2026)
+
+> This repo is **public**. Never put passwords, API keys or private emails here. Secrets live only in Supabase → Edge Functions → Secrets.
+
+### Live links
+| What | Link |
+|---|---|
+| Course website | https://safarnama.club |
+| Admin panel (Humaira) | https://safarnama.club/admin/ |
+| Brand website | https://saravaparihaaraglobal.com |
+| Website code | https://github.com/irfansiddiqui08/safarnama (GitHub Pages, domain on Namecheap) |
+| App + backend code | https://github.com/irfansiddiqui08/safarnama-app |
+
+### Dashboards
+| Service | What it does | Dashboard |
+|---|---|---|
+| Supabase (project `mtcvkfyxxkurinfloazu`) | Database, logins, backend functions | https://supabase.com/dashboard/project/mtcvkfyxxkurinfloazu |
+| ↳ Function secrets | Bunny, Razorpay, Resend keys | https://supabase.com/dashboard/project/mtcvkfyxxkurinfloazu/functions/secrets |
+| ↳ Function logs | First place to look when something fails | Edge Functions → pick function → Logs |
+| Resend | Sends login codes (SMTP for Supabase) and shop-order emails | https://resend.com/emails |
+| Bunny Stream (library `safarnama`, ID 809902) | Class recordings | https://dash.bunny.net/stream → click **safarnama** (open by clicking; a direct link to its Security page loads forever) |
+| Razorpay (Live mode) | Payments, webhook, API keys | https://dashboard.razorpay.com |
+| Expo / EAS (team `safarnamaclubs-team`, project `safarnama`) | App builds, instant updates, signing key, push key | https://expo.dev/accounts/safarnamaclubs-team/projects/safarnama |
+| ↳ Builds | APK / Play Store files | …/projects/safarnama/builds |
+| ↳ Workflows | Auto-publishes an update on every push to `main` | …/projects/safarnama/workflows |
+| ↳ Credentials | Android signing key (**never delete**) + FCM push key | …/projects/safarnama/credentials |
+| Firebase (project `safarnamaclub-19edf`) | Android push notifications | https://console.firebase.google.com/project/safarnamaclub-19edf |
+| Google Play Console | Store listing and releases | https://play.google.com/console |
+| Namecheap | safarnama.club domain + DNS | https://ap.www.namecheap.com/domains/list/ |
+
+### Accounts (who owns what)
+| Service | Login | Notes |
+|---|---|---|
+| GitHub | `irfansiddiqui08` | Both repos; Expo GitHub app installed on `safarnama-app` only |
+| Supabase | GitHub `irfansiddiqui08` | Free plan (pauses after 7 days of no activity) |
+| Admin panel | humayrasheikh03@gmail.com | Admins listed in table `admin_emails` |
+| Expo | user `safarnama.club`, team `safarnamaclubs-team` | |
+| Firebase | Humaira's Google account | |
+| Razorpay | Humaira (Sarava Parihaara) | Website approved, live keys created 23 Nov 2026 |
+| Bunny | see private notes | 14-day trial from ~16 Nov 2026 — **add a card before it ends** |
+| Resend | see private notes | |
+| Play Console | see private notes | Owner can't be changed later |
+| Namecheap | Humaira | Renew safarnama.club yearly |
+| Public contact | WhatsApp +91 73548 54003 · humayrasheikh03@gmail.com | Shown on the website and in the app |
+
+### App identifiers
+- Android package / iOS bundle: `club.safarnama.app`
+- Version 1.0.0 · runtime `appVersion` · channels `preview` (test APK) and `production` (store)
+- Store assets: `store/playstore-icon-512.png`, `store/feature-graphic-1024x500.png`
+
+### What's left
+**Before the 1 December batch**
+- [ ] Humaira tests the app end-to-end: schedule a class, upload a recording, send a push (admin panel)
+- [ ] Bunny: add a card before the trial ends (around 30 Nov)
+- [ ] Supabase: upgrade to Pro ($25/month) so the backend never pauses
+- [ ] Refund the ₹999 test payment (Razorpay → Transactions → Payments → Refund)
+
+**Play Store (Android)**
+- [ ] Create the developer account ("Yourself", in Humaira's name, $25) and finish identity verification
+- [ ] Create the app, fill the store listing (text in chat; icon + feature graphic in `store/`), privacy policy `https://safarnama.club/privacy.html`, content rating, data safety
+- [ ] Upload the production build (`.aab` from Expo Builds) to **Internal testing**
+- [ ] Closed test with **12+ testers for 14 days** (required for new personal accounts), then apply for production
+- [ ] Give Google a demo login (a test email enrolled in one programme)
+- [ ] Optional: Google service account key in Expo → Credentials so future builds upload to Play automatically
+
+**iPhone (later)**
+- [ ] Apple Developer account in Humaira's name ($99/year)
+- [ ] iOS build + App Store listing
+
+**Nice to have**
+- [ ] Crash reports (Sentry, free) — step 10
+- [ ] One-to-one sessions on the website checkout (marked as bookings, no app access)
+- [ ] Higher-resolution photo for the app icon
+- [ ] Before 2027: move functions off Supabase legacy keys (`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY`)
+- [ ] Pending from Humaira: confirm refund rules, Saba Khan's consent for her video, "5.O" vs "5.0" spelling
+
 ## How access works
 - **Students only see what they paid for.** The database itself enforces this, not just the app.
 - **Getting students in:** a Razorpay payment adds the buyer's email automatically. Humaira can also add anyone by hand in the admin panel.
@@ -82,14 +158,6 @@ Open **https://safarnama.club/admin/** and log in with Humaira's email. This nee
 ### 7. Razorpay → automatic enrolment ✅ done 23 Nov 2026
 The website now takes payments itself: **Join** on safarnama.club calls the `create-order` function, which charges the price stored in the database and writes the programme into the order. The webhook enrols the buyer's email automatically. Secrets: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`. One-to-one sessions are still booked on WhatsApp.
 
-### 8. Sarava Parihaara shop checkout (saravaparihaaraglobal.com)
-The product website uses the same Razorpay account through a separate function, `shop-order`.
-- **Prices live inside `supabase/functions/shop-order/index.ts`** (the browser sends only product ids and quantities). Free shipping. When a price changes, update it there **and** in the website's `assets/js/products.js`.
-- Each Razorpay payment's **Notes** show the items, total, name, phone and delivery address. Fulfil orders from **Razorpay Dashboard → Transactions → Payments**.
-- Shop orders are marked `type: shop`, and `razorpay-webhook` skips them, so they never create enrolments or show up as unmatched payments.
-- **New-order email:** `razorpay-webhook` emails each paid shop order (items, address, phone, payment link) to Humaira through Resend. Secrets: `RESEND_API_KEY` (required), `ORDER_EMAIL_TO` (optional, default humayrasheikh03@gmail.com, comma-separate several). With Resend's free test sender the Resend account must be registered with the same email that receives the orders.
-- Deploy: Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor**, name `shop-order`, paste `shop-order/index.ts`, then turn **off** "Verify JWT" (Razorpay keys are already set as secrets). Redeploy `razorpay-webhook` after updating it: it is a single self-contained file, so open the function in the dashboard → Code → paste `razorpay-webhook/index.ts` → Deploy.
-
 Older notes (Payment Pages, only needed if you ever add one):
 1. Razorpay Dashboard → **Accounts & Settings → Webhooks → Add new webhook**:
    - URL: `https://YOUR_PROJECT_REF.supabase.co/functions/v1/razorpay-webhook`
@@ -98,6 +166,14 @@ Older notes (Payment Pages, only needed if you ever add one):
 2. In the admin panel → **Payments → Teach the matcher**: add each Payment Page ID (`pl_…`) with its programme.
    - The ₹11,000, ₹2,100 and ₹3,500 pages are matched by price automatically. The ₹999 pages need this step because several programmes cost ₹999.
    - Anything that can't be matched appears under **Payments** for one-click enrolment.
+
+### 7b. Sarava Parihaara shop checkout (saravaparihaaraglobal.com)
+The product website uses the same Razorpay account through a separate function, `shop-order`.
+- **Prices live inside `supabase/functions/shop-order/index.ts`** (the browser sends only product ids and quantities). Free shipping. When a price changes, update it there **and** in the website's `assets/js/products.js`.
+- Each Razorpay payment's **Notes** show the items, total, name, phone and delivery address. Fulfil orders from **Razorpay Dashboard → Transactions → Payments**.
+- Shop orders are marked `type: shop`, and `razorpay-webhook` skips them, so they never create enrolments or show up as unmatched payments.
+- **New-order email:** `razorpay-webhook` emails each paid shop order (items, address, phone, payment link) to Humaira through Resend. Secrets: `RESEND_API_KEY` (required), `ORDER_EMAIL_TO` (optional, default humayrasheikh03@gmail.com, comma-separate several). With Resend's free test sender the Resend account must be registered with the same email that receives the orders.
+- Deploy: Supabase Dashboard → Edge Functions → **Deploy a new function → Via editor**, name `shop-order`, paste `shop-order/index.ts`, then turn **off** "Verify JWT" (Razorpay keys are already set as secrets). Redeploy `razorpay-webhook` after updating it: it is a single self-contained file, so open the function in the dashboard → Code → paste `razorpay-webhook/index.ts` → Deploy.
 
 ### 8. Link the app to Expo ✅ done 23 Nov 2026 (project `@safarnamaclubs-team/safarnama`, builds run from GitHub, base directory `/app`)
 ```bash
@@ -148,6 +224,9 @@ For App Review, give both stores a **demo login**: a test email enrolled in one 
 ---
 
 ## Sending fixes and updates later
+
+Screen and text changes are published automatically: push to `main` and Expo Workflows (`app/.eas/workflows/publish-update.yml`) sends an update to both channels. Users get it after reopening the app twice. Changes to the icon, splash, permissions, native packages or version number need a new build instead.
+
 | What changed | How it reaches students | Command |
 |---|---|---|
 | Database, access rules, backend functions, admin panel, website | Instantly. These run on servers. | `npx supabase functions deploy …` or push to GitHub |
