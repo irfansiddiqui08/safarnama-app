@@ -1,7 +1,8 @@
 // Sarava Parihaara website checkout (saravaparihaaraglobal.com): creates a Razorpay order for the shop cart.
 // Self-contained single file so it can be pasted into the Supabase dashboard editor.
-// Shares Humaira's Razorpay account and keys (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) with the course checkout.
-// Orders carry notes.type = "shop" so razorpay-webhook does not treat them as course purchases.
+// Uses the separate Sarava Parihaara Razorpay account (Razorpay asked to keep the shop and the course on different accounts).
+// Secrets: SHOP_RAZORPAY_KEY_ID / SHOP_RAZORPAY_KEY_SECRET. The course keys (RAZORPAY_*) are never used here.
+// Orders carry notes.type = "shop"; shop-webhook emails each paid order to Humaira.
 // Fulfil shop orders from the Razorpay dashboard: each payment shows items + delivery address in its notes.
 //
 // PRICES LIVE HERE, on the server. The browser only sends product ids and quantities.
@@ -93,10 +94,10 @@ if (import.meta.main) Deno.serve(async (req) => {
     const q = quote(await req.json().catch(() => ({})));
     if (!q.ok) return json({ error: q.error }, 400);
 
-    const keyId = env("RAZORPAY_KEY_ID");
+    const keyId = env("SHOP_RAZORPAY_KEY_ID");
     const r = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${env("RAZORPAY_KEY_SECRET")}`) },
+      headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${keyId}:${env("SHOP_RAZORPAY_KEY_SECRET")}`) },
       body: JSON.stringify({ amount: q.total * 100, currency: "INR", receipt: `sp-${Date.now()}`, notes: orderNotes(q) }),
     });
     const order = await r.json().catch(() => ({}));

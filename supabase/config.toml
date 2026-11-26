@@ -22,3 +22,7 @@ verify_jwt = false
 [functions.shop-order]
 # Public: Sarava Parihaara website cart checkout. Prices are fixed inside the function.
 verify_jwt = false
+
+[functions.shop-webhook]
+# Razorpay webhook of the separate Sarava Parihaara account: emails each paid shop order.
+verify_jwt = false
